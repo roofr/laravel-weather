@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Skeleton\Tests;
+namespace Roofr\Weather\Tests;
 
 use PHPUnit\Framework\TestCase;
 

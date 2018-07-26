@@ -1,17 +1,17 @@
 {
-    "name": "spatie/:package_name",
-    "description": ":package_description",
+    "name": "roofr/laravel-weather",
+    "description": "A local weather module",
     "keywords": [
-        "spatie",
-        ":package_name"
+        "roofr",
+        "weather"
     ],
-    "homepage": "https://github.com/spatie/:package_name",
+    "homepage": "https://github.com/roofr/laravel-weather",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": "https://spatie.be",
+            "name": "Kevin Redman",
+            "email": "iredmedia@gmail.com",
+            "homepage": "https://roofr.com",
             "role": "Developer"
         }
     ],
@@ -24,12 +24,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\Skeleton\\": "src"
+            "Roofr\\Weather\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\Skeleton\\Tests\\": "tests"
+            "Roofr\\Weather\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -43,10 +43,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Spatie\\Skeleton\\SkeletonServiceProvider"
+                "Roofr\\Weather\\WeatherServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "Spatie\\Skeleton\\SkeletonFacade"
+                "Weather": "Roofr\\Weather\\WeatherFacade"
             }
         }
     }
