@@ -4,6 +4,7 @@ namespace Roofr\Weather;
 
 use GuzzleHttp\Client;
 use Illuminate\Cache\CacheManager;
+use Illuminate\View\Factory;
 
 class WeatherClass
 {
@@ -12,10 +13,18 @@ class WeatherClass
      * @param CacheManager $cache
      * @param $config
      */
-    public function __construct(CacheManager $cache, $config)
+    public function __construct(CacheManager $cache, Factory $view, $config)
     {
         $this->cache = $cache;
+        $this->view = $view;
         $this->config = $config;
+    }
+
+    public function generate($address)
+    {
+        $data = $this->query($address);
+        $view = "laravel-weather::widget.{$this->config['defaults']['style']}";
+        return $this->view->make($view, $data);
     }
 
     /**
@@ -29,7 +38,7 @@ class WeatherClass
         $cacheKey = "laravel-weather.{$address}";
 
         if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+//            return $this->cache->get($cacheKey);
         }
 
         // Get location data + coordinates
@@ -40,16 +49,43 @@ class WeatherClass
         $client = new Client();
         $uri = "https://api.darksky.net/forecast/{$this->config['api_key']}/{$coordinates}?exclude=hourly,minutely,alerts";
         $response = $client->get($uri);
+        $weather = json_decode($response->getBody(), true);
 
         // Build response
         $data = [
-            'weather' => json_decode($response->getBody(), true),
+            'weather' => $weather,
             'location' => $location,
+            'meta_data' => [
+                'max_windspeed' => $this->getMaxWindspeed($weather),
+                'rainy_days' => $this->getRainyDays($weather),
+            ]
         ];
 
         $this->cache->put($cacheKey, $data, 60*24);
 
         return $data;
+    }
+
+    /**
+     * Get the number of rainy days this week
+     * @param $weather
+     * @return array|null
+     */
+    private function getRainyDays($weather) {
+        if (!isset($weather['daily']) || !count($daily = $weather['daily']['data']) > 0) return null;
+        return count(array_where(collect($daily)->pluck('icon')->toArray(), function($item){
+            return $item == 'rain';
+        }));
+    }
+
+    /**
+     * Get the number of rainy days this week
+     * @param $weather
+     * @return array|null
+     */
+    private function getMaxWindspeed($weather) {
+        if (!isset($weather['daily']) || !count($daily = $weather['daily']['data']) > 0) return null;
+        return round(max(collect($daily)->pluck('windGust')->toArray()));
     }
 
     /**

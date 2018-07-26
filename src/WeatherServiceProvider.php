@@ -11,18 +11,16 @@ class WeatherServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-weather');
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('weather.php'),
-            ], 'laravel-weather');
-
-            /*
-            $this->loadViewsFrom(__DIR__.'/../resources/views', 'skeleton');
+            ], 'config');
 
             $this->publishes([
-                __DIR__.'/../resources/views' => base_path('resources/views/vendor/skeleton'),
+                __DIR__.'/../resources/views' => base_path('resources/views/vendor/laravel-weather'),
             ], 'views');
-            */
         }
     }
 
@@ -31,12 +29,12 @@ class WeatherServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-weather::config');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-weather');
 
         $this->app->singleton('weather', function ($app) {
-            $config = $app->config->get('laravel-weather::config', array());
+            $config = $app->config->get('laravel-weather', array());
 
-            return new WeatherClass($app->cache, $config);
+            return new WeatherClass($app->cache, $app->view, $config);
         });
 
     }
