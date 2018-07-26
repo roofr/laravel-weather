@@ -38,7 +38,7 @@ class WeatherClass
         $cacheKey = "laravel-weather.{$address}";
 
         if ($this->cache->has($cacheKey)) {
-//            return $this->cache->get($cacheKey);
+            return $this->cache->get($cacheKey);
         }
 
         // Get location data + coordinates
