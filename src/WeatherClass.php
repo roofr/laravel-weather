@@ -9,8 +9,9 @@ use Illuminate\View\Factory;
 class WeatherClass
 {
     /**
-     * Create a new Skeleton Instance.
+     * Create a new WeatherClass Instance.
      * @param CacheManager $cache
+     * @param Factory $view
      * @param $config
      */
     public function __construct(CacheManager $cache, Factory $view, $config)
@@ -19,7 +20,11 @@ class WeatherClass
         $this->view = $view;
         $this->config = $config;
     }
-
+    
+    /**
+     * Generate an html view
+     * @param $address
+     */
     public function generate($address)
     {
         $data = $this->query($address);
