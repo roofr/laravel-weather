@@ -2,6 +2,7 @@
 
 namespace Roofr\Weather;
 
+use Geocoder\Laravel\Facades\Geocoder;
 use GuzzleHttp\Client;
 use Illuminate\Cache\CacheManager;
 use Illuminate\View\Factory;
@@ -20,10 +21,11 @@ class WeatherClass
         $this->view = $view;
         $this->config = $config;
     }
-    
+
     /**
      * Generate an html view
      * @param $address
+     * @return \Illuminate\Contracts\View\View
      */
     public function generate($address)
     {
@@ -34,7 +36,6 @@ class WeatherClass
 
     /**
      * Returns weather for a given location (ie. Naples, Fl)
-     *
      * @param $address
      * @return array|\Illuminate\Contracts\Cache\Repository
      */
@@ -43,7 +44,7 @@ class WeatherClass
         $cacheKey = "laravel-weather.{$address}";
 
         if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+//            return $this->cache->get($cacheKey);
         }
 
         // Get location data + coordinates
@@ -78,9 +79,8 @@ class WeatherClass
      */
     private function getRainyDays($weather) {
         if (!isset($weather['daily']) || !count($daily = $weather['daily']['data']) > 0) return null;
-        return count(array_where(collect($daily)->pluck('icon')->toArray(), function($item){
-            return $item == 'rain';
-        }));
+        $rainyDayCount = collect($daily)->where('icon', 'rain')->count();
+        return $rainyDayCount;
     }
 
     /**
@@ -90,12 +90,11 @@ class WeatherClass
      */
     private function getMaxWindspeed($weather) {
         if (!isset($weather['daily']) || !count($daily = $weather['daily']['data']) > 0) return null;
-        return round(max(collect($daily)->pluck('windGust')->toArray()));
+        return round(collect($daily)->pluck('windGust')->max());
     }
 
     /**
      * Returns the coordinates from a given location
-     *
      * @param $location
      * @return array
      */
@@ -105,11 +104,10 @@ class WeatherClass
 
     /**
      * Gets the location via geocoder
-     *
      * @param $address
      * @return mixed
      */
     private function getLocation($address) {
-        return \Geocoder::geocode($address)->get()->first();
+        return Geocoder::geocode($address)->get()->first();
     }
 }
