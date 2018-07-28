@@ -25,13 +25,24 @@ class WeatherClass
     /**
      * Generate an html view
      * @param $address
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Cache\Repository|\Illuminate\Contracts\View\View
      */
     public function generate($address)
     {
+        $address = strtolower($address);
         $data = $this->query($address);
         $view = "laravel-weather::widget.{$this->config['defaults']['style']}";
-        return $this->view->make($view, $data);
+        $cacheKey = "{$view}-{$address}";
+
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
+        $view = $this->view->make($view, $data);
+
+        $this->cache->put($cacheKey, $data, 60*24);
+
+        return $view;
     }
 
     /**
@@ -40,7 +51,7 @@ class WeatherClass
      * @return array|\Illuminate\Contracts\Cache\Repository
      */
     public function query($address) {
-        $address = strtolower(str_replace(' ', '', $address));
+        $address = strtolower($address);
         $cacheKey = "laravel-weather.{$address}";
 
         if ($this->cache->has($cacheKey)) {
