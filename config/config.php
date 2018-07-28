@@ -11,5 +11,5 @@ return array(
     */
 
     'api_key' => env('WEATHER_API_KEY'),
-    'view' => 'roofing', // ie. default for resources/views/vendor/widget/roofing.blade.php
+    'view' => 'default', // ie. default for resources/views/vendor/widget/roofing.blade.php
 );
