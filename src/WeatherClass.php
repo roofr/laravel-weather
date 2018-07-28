@@ -31,7 +31,7 @@ class WeatherClass
     {
         $address = strtolower($address);
         $data = $this->query($address);
-        $view = "laravel-weather::widget.{$this->config['defaults']['style']}";
+        $view = "laravel-weather::widget.{$this->config['view']}";
         $cacheKey = "{$view}-{$address}";
 
         if ($this->cache->has($cacheKey)) {
