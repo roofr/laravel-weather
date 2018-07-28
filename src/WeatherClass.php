@@ -38,9 +38,9 @@ class WeatherClass
             return $this->cache->get($cacheKey);
         }
 
-        $view = $this->view->make($view, $data);
+        $view = $this->view->make($view, $data)->render();
 
-        $this->cache->put($cacheKey, $data, 60*24);
+        $this->cache->put($cacheKey, $view, 60*24);
 
         return $view;
     }
