@@ -33,11 +33,11 @@ class WeatherServiceProvider extends ServiceProvider
     public function register()
     {
         // Merge the default config from this package with this packages config (laravel-weather::config)
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-weather');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'weather');
 
         // Define a singleton for the weather app (ie. app('weather'))
         $this->app->singleton('weather', function ($app) {
-            $config = $app->config->get('laravel-weather', array());
+            $config = $app->config->get('weather', array());
 
             return new WeatherClass($app->cache, $app->view, $config);
         });
