@@ -29,6 +29,8 @@ class WeatherClass
      */
     public function generate($address)
     {
+        if (!$this->config->get('enabled')) return null;
+
         $address = strtolower($address);
         $data = $this->query($address);
         $view = "laravel-weather::widget.{$this->config['view']}";
