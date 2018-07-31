@@ -29,7 +29,7 @@ class WeatherClass
      */
     public function generate($address)
     {
-        if (!$this->config['enabled')) return null;
+        if (!$this->config['enabled']) return null;
 
         $address = strtolower($address);
         $data = $this->query($address);
