@@ -1,6 +1,7 @@
 {
     "name": "roofr/laravel-weather",
     "description": "A local weather module",
+    "version": "0.2.5",
     "keywords": [
         "roofr",
         "weather"
